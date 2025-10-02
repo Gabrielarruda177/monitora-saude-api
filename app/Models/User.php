@@ -12,7 +12,7 @@ class User extends Model
     protected $fillable = [
         'nome', 'data_nasc', 'peso', 'altura', 'tipo_sanguineo',
         'cep', 'logradouro', 'complemento', 'bairro', 'cidade', 'estado',
-        'email', 'senha'
+        'email', 'senha', 'foto'
     ];
 
     protected $hidden = ['senha'];

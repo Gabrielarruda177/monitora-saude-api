@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    // Etapa 1: Cadastro inicial (apenas nome)
+    // Etapa 1: Cadastro inicial (agora com foto opcional)
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -25,10 +25,13 @@ class UserController extends Controller
             'bairro' => 'nullable|string',
             'cidade' => 'nullable|string',
             'estado' => 'nullable|string',
+            // 🚨 CAMPO 'FOTO' ADICIONADO AQUI
+            'foto' => 'nullable|string', 
         ]);
 
         if (isset($data['senha'])) {
-            $data['senha'] = bcrypt($data['senha']);
+            // Garante que o campo 'senha' seja criptografado se estiver presente
+            $data['senha'] = bcrypt($data['senha']); 
         }
 
         $user = User::create($data);
@@ -36,7 +39,7 @@ class UserController extends Controller
         return response()->json(['id' => $user->id], 201);
     }
 
-    // Etapa 2 e 3: Atualização dos dados
+    // Etapa 2 e 3: Atualização dos dados (com foto)
     public function update(Request $request, $id)
     {
         $user = User::find($id);
@@ -44,6 +47,7 @@ class UserController extends Controller
             return response()->json(['error' => 'Usuário não encontrado'], 404);
         }
 
+        // 🚨 VALIDAÇÃO ÚNICA E CORRETA
         $data = $request->validate([
             'nome' => 'nullable|string|min:2',
             'email' => 'nullable|email|unique:users,email,' . $id,
@@ -57,18 +61,20 @@ class UserController extends Controller
             'bairro' => 'nullable|string',
             'cidade' => 'nullable|string',
             'estado' => 'nullable|string',
+            'foto' => 'nullable|string', // 🚨 CAMPO 'FOTO' MANTIDO
         ]);
 
         if (isset($data['senha'])) {
-            $data['senha'] = bcrypt($data['senha']);
+            // Criptografa a nova senha se ela for enviada
+            $data['senha'] = bcrypt($data['senha']); 
         }
-
+        
         $user->update($data);
 
         return response()->json(['success' => true]);
     }
 
-    // Login
+    // Login (Mantido)
     public function login(Request $request)
     {
         $data = $request->validate([
